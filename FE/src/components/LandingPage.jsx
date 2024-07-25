@@ -22,7 +22,7 @@ const LandingPage = () => {
             </p>
             <button
               onClick={() => navigate("/login")}
-              className="px-6 py-3 bg-theme-ERNI text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition duration-200"
+              className="px-6 py-3 bg-theme-ERNI text-white border border-theme-ERNI hover:bg-white hover:text-theme-ERNI font-semibold rounded-lg shadow-md transition duration-200"
             >
               Get Started
             </button>

@@ -73,7 +73,7 @@ const LoginPage = () => {
             </div>
             <button
               type="submit"
-              className="border border-theme-ERNI text-theme-ERNI hover:bg-theme-ERNI hover:text-white py-2 px-4 w-full rounded"
+              className="bg-theme-ERNI text-white border border-theme-ERNI hover:bg-white hover:text-theme-ERNI py-2 px-4 w-full font-semibold rounded transition duration-200"
             >
               Login
             </button>
