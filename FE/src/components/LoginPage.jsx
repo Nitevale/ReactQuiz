@@ -25,7 +25,8 @@ const LoginPage = () => {
       data.password === hardcodedAdmin.password
     ) {
       dispatch(login({ username: data.username }));
-      navigate("/choices");
+      console.log("Login dispatched, navigating to /examiner");
+      navigate("/examiner");
     } else {
       alert("Invalid credentials");
     }
@@ -73,7 +74,11 @@ const LoginPage = () => {
             </div>
             <button
               type="submit"
-              className="bg-theme-ERNI text-white border border-theme-ERNI hover:bg-white hover:text-theme-ERNI py-2 px-4 w-full font-semibold rounded transition duration-200"
+              className="bg-theme-ERNI text-white 
+              border border-theme-ERNI 
+              hover:bg-white hover:text-theme-ERNI 
+              py-2 px-4 w-full font-semibold rounded 
+              transition duration-300 ease-in-out"
             >
               Login
             </button>
