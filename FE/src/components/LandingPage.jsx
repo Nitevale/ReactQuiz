@@ -18,7 +18,7 @@ const LandingPage = () => {
             </h2>
             <p className="text-lg md:text-xl mb-6">
               How well do you know
-              <span className="text-theme-ERNI"> ERNI</span>?
+              <span className="text-theme-ERNI"> ERNI</span> Bootcampers?
             </p>
             <button
               onClick={() => navigate("/login")}

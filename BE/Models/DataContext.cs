@@ -8,7 +8,7 @@ namespace BE.Models
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         public DbSet<QuestionEntity> Questions { get; set; }
-
+        public DbSet<Choice> Choices { get; set; }
         public DbSet<UserEntity> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,6 +19,8 @@ namespace BE.Models
                 .WithOne(c => c.Question)
                 .HasForeignKey(c => c.QuestionId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 

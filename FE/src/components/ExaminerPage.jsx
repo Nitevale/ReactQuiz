@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
 import { logout } from "../redux/authSlice";
-import apiService from '../apiService';
+import axios from 'axios';
 
 const ExaminerPage = () => {
   const dispatch = useDispatch();
