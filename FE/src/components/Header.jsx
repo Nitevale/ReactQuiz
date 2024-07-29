@@ -1,5 +1,5 @@
 import React from 'react';
-import quizerniaLogo from '../assets/Quizernia.png';
+import quizerniaLogo from '../assets/Quizernia2.png';
 
 const Header = () => {
   return (

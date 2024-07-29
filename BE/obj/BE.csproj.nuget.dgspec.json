@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\VSProj\\ReactQuiz\\BE\\BE.csproj": {}
+    "C:\\Users\\Boot Camp\\ReactQuiz\\BE\\BE.csproj": {}
   },
   "projects": {
-    "E:\\VSProj\\ReactQuiz\\BE\\BE.csproj": {
+    "C:\\Users\\Boot Camp\\ReactQuiz\\BE\\BE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\VSProj\\ReactQuiz\\BE\\BE.csproj",
+        "projectUniqueName": "C:\\Users\\Boot Camp\\ReactQuiz\\BE\\BE.csproj",
         "projectName": "BE",
-        "projectPath": "E:\\VSProj\\ReactQuiz\\BE\\BE.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "E:\\VSProj\\ReactQuiz\\BE\\obj\\",
+        "projectPath": "C:\\Users\\Boot Camp\\ReactQuiz\\BE\\BE.csproj",
+        "packagesPath": "C:\\Users\\Boot Camp\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Boot Camp\\ReactQuiz\\BE\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Boot Camp\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

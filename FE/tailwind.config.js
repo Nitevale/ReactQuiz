@@ -24,6 +24,7 @@ export default {
     extend: {
       backgroundImage: {
         'custom-image': "url('/src/assets/Quizernia.png')",
+        'wallpaper': "url('/src/assets/desktop.svg')",
       },
       colors: {
         theme: {

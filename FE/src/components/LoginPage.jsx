@@ -33,8 +33,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen py-16 px-4">
-      <div className="flex flex-col md:flex-row w-full max-w-4xl mx-auto bg-white overflow-hidden">
+    <div className="flex items-center justify-center min-h-screen py-16 px-4 bg-wallpaper">
+      <div className="flex flex-col md:flex-row w-full max-w-4xl mx-auto overflow-hidden">
         <SideLogo />
         <div className="w-full md:w-1/2 p-6 flex flex-col items-center justify-center">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">

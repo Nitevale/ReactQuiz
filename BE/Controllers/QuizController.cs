@@ -20,7 +20,7 @@ namespace BE.Controllers
 
         // GET: api/quiz
         [HttpGet]
-        public async Task<IActionResult> GetQuestions()
+        public async Task<IActionResult> GetAllQuestions()
         {
             var questions = await _context.Questions
                 .Include(q => q.Choices)
@@ -28,7 +28,7 @@ namespace BE.Controllers
 
             var questionDTOs = questions.Select(q => new QuestionDTO
             {
-                QuestionId = q.QuestionID,
+                QuestionID = q.QuestionID,
                 QuestionText = q.QuestionText,
                 Choices = q.Choices.Select(c => new ChoiceDTO
                 {
@@ -43,7 +43,7 @@ namespace BE.Controllers
 
         // GET: api/quiz/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetQuestion(Guid id)
+        public async Task<IActionResult> GetQuestion(int id)
         {
             var question = await _context.Questions
                 .Include(q => q.Choices)
@@ -56,7 +56,7 @@ namespace BE.Controllers
 
             var questionDTO = new QuestionDTO
             {
-                QuestionId = question.QuestionID,
+                QuestionID = question.QuestionID,
                 QuestionText = question.QuestionText,
                 Choices = question.Choices.Select(c => new ChoiceDTO
                 {
@@ -80,11 +80,9 @@ namespace BE.Controllers
 
             var question = new QuestionEntity
             {
-                QuestionID = Guid.NewGuid(),
                 QuestionText = dto.QuestionText,
                 Choices = dto.Choices.Select(c => new Choice
                 {
-                    ChoiceId = Guid.NewGuid(),
                     ChoiceText = c.ChoiceText,
                     IsCorrect = c.IsCorrect
                 }).ToList()
@@ -95,7 +93,7 @@ namespace BE.Controllers
 
             var createdQuestionDTO = new QuestionDTO
             {
-                QuestionId = question.QuestionID,
+                QuestionID = question.QuestionID,
                 QuestionText = question.QuestionText,
                 Choices = question.Choices.Select(c => new ChoiceDTO
                 {
@@ -110,9 +108,9 @@ namespace BE.Controllers
 
         // PUT: api/quiz/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateQuestion(Guid id, [FromBody] CreateQuestionDTO dto)
+        public async Task<IActionResult> UpdateQuestion(int id, [FromBody] CreateQuestionDTO dto)
         {
-            if (id == Guid.Empty || dto == null || !ModelState.IsValid)
+            if (dto == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -129,7 +127,6 @@ namespace BE.Controllers
             question.QuestionText = dto.QuestionText;
             question.Choices = dto.Choices.Select(c => new Choice
             {
-                ChoiceId = Guid.NewGuid(),  // Update if existing choices are updated
                 ChoiceText = c.ChoiceText,
                 IsCorrect = c.IsCorrect
             }).ToList();
@@ -139,7 +136,7 @@ namespace BE.Controllers
 
             var updatedQuestionDTO = new QuestionDTO
             {
-                QuestionId = question.QuestionID,
+                QuestionID = question.QuestionID,
                 QuestionText = question.QuestionText,
                 Choices = question.Choices.Select(c => new ChoiceDTO
                 {

@@ -6,8 +6,8 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-center min-h-screen py-16 px-4">
-      <div className="bg-white overflow-hidden w-full max-w-4xl mx-auto">
+    <div className="flex items-center justify-center min-h-screen py-16 px-4 bg-wallpaper">
+      <div className="overflow-hidden w-full max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row">
           <SideLogo/>
           <div className="w-full md:w-1/2 p-6 flex flex-col items-center justify-center text-center">

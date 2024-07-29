@@ -5,8 +5,8 @@ namespace BE.Models.Domain
     public class QuestionEntity
     {
         [Key]
-        public Guid QuestionID { get; set; }  // Primary Key
-        public string QuestionText { get; set; }  // Text of the question
+        public int QuestionID { get; set; }  // Primary Key
+        public required string QuestionText { get; set; }  // Text of the question
 
         // Navigation property to related choices
         public ICollection<Choice> Choices { get; set; }

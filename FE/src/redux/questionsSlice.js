@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5297/api/Quiz';
 
-export const fetchQuestions = createAsyncThunk('Quiz/fetchQuestions', async () => {
+export const fetchQuestions = createAsyncThunk('quiz/fetchQuestions', async () => {
   const response = await axios.get(API_URL);
   return response.data;
 });

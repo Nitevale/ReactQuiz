@@ -24,9 +24,11 @@ namespace BE.Migrations
 
             modelBuilder.Entity("BE.Models.Domain.QuestionEntity", b =>
                 {
-                    b.Property<Guid>("QuestionID")
+                    b.Property<int>("QuestionID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuestionID"));
 
                     b.Property<string>("QuestionText")
                         .IsRequired()
@@ -58,9 +60,11 @@ namespace BE.Migrations
 
             modelBuilder.Entity("Choice", b =>
                 {
-                    b.Property<Guid>("ChoiceId")
+                    b.Property<int>("ChoiceId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChoiceId"));
 
                     b.Property<string>("ChoiceText")
                         .IsRequired()
@@ -69,21 +73,21 @@ namespace BE.Migrations
                     b.Property<bool>("IsCorrect")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("QuestionID")
+                        .HasColumnType("int");
 
                     b.HasKey("ChoiceId");
 
-                    b.HasIndex("QuestionId");
+                    b.HasIndex("QuestionID");
 
-                    b.ToTable("Choice");
+                    b.ToTable("Choices");
                 });
 
             modelBuilder.Entity("Choice", b =>
                 {
                     b.HasOne("BE.Models.Domain.QuestionEntity", "Question")
                         .WithMany("Choices")
-                        .HasForeignKey("QuestionId")
+                        .HasForeignKey("QuestionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

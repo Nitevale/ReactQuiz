@@ -17,7 +17,7 @@ namespace BE.Models
             modelBuilder.Entity<QuestionEntity>()
                 .HasMany(q => q.Choices)
                 .WithOne(c => c.Question)
-                .HasForeignKey(c => c.QuestionId)
+                .HasForeignKey(c => c.QuestionID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);

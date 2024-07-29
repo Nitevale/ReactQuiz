@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTable } from 'react-table';
 import { logout } from '../redux/authSlice';
 import { fetchQuestions, createQuestion, updateQuestion, deleteQuestion } from '../redux/questionsSlice';
-import QuestionForm from './QuestionForm';
 
 const ExaminerPage = () => {
   const dispatch = useDispatch();
@@ -13,7 +12,7 @@ const ExaminerPage = () => {
   const questions = useSelector((state) => state.questions.questions);
   const questionsStatus = useSelector((state) => state.questions.status);
   const [isFormVisible, setIsFormVisible] = useState(false);
-  const [formInitialData, setFormInitialData] = useState({});
+  const [formInitialData, setFormInitialData] = useState({ questionText: '' });
 
   useEffect(() => {
     if (questionsStatus === 'idle') {
@@ -22,7 +21,7 @@ const ExaminerPage = () => {
   }, [questionsStatus, dispatch]);
 
   const handleAddNew = () => {
-    setFormInitialData({});
+    setFormInitialData({ questionText: '' });
     setIsFormVisible(true);
   };
 
@@ -32,11 +31,15 @@ const ExaminerPage = () => {
     setIsFormVisible(true);
   };
 
-  const handleFormSubmit = (formData) => {
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const questionData = Object.fromEntries(formData.entries());
+
     if (formInitialData.questionId) {
-      dispatch(updateQuestion({ id: formInitialData.questionId, question: formData }));
+      dispatch(updateQuestion({ id: formInitialData.questionId, question: questionData }));
     } else {
-      dispatch(createQuestion(formData));
+      dispatch(createQuestion(questionData));
     }
     setIsFormVisible(false);
   };
@@ -47,7 +50,7 @@ const ExaminerPage = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/');
+    navigate('/login');
   };
 
   const data = React.useMemo(() => (Array.isArray(questions) ? questions : []), [questions]);
@@ -56,13 +59,13 @@ const ExaminerPage = () => {
     () => [
       { Header: 'Questions', accessor: 'questionText' },
       {
-        Header: 'Action',
+        Header: ' ',
         accessor: 'action',
         Cell: ({ row }) => (
-          <div className="flex space-x-2">
-            <button type="button" className="btn btn-warning btn-sm view-button text-white" onClick={() => handleView(row.original.questionId)}>View</button>
-            <button type="button" className="btn btn-primary btn-sm edit-button" onClick={() => handleEdit(row.original.questionId)}>Edit</button>
-            <button type="button" className="btn btn-danger btn-sm delete-button" onClick={() => handleDelete(row.original.questionId)}>Delete</button>
+          <div className="flex space-x-4 justify-end items-center">
+            <button type="button" onClick={() => handleView(row.original.questionId)}><i class="fa-solid fa-eye"></i></button>
+            <button type="button" onClick={() => handleEdit(row.original.questionId)}><i class="fa-solid fa-pen-to-square"></i></button>
+            <button type="button" onClick={() => handleDelete(row.original.questionId)}><i class="fa-solid fa-trash"></i></button>
           </div>
         ),
         width: 150,
@@ -79,57 +82,80 @@ const ExaminerPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-8">
-      <div className="w-full max-w-4xl">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome, {user.username}</h1>
-          <button type="button" onClick={handleLogout} className="bg-red-500 text-white py-2 px-4 rounded">Logout</button>
-        </div>
-        <button type="button" onClick={handleAddNew} className="mb-4 bg-green-500 text-white py-2 px-4 rounded">Add New Question</button>
-        {isFormVisible && <QuestionForm onSubmit={handleFormSubmit} initialData={formInitialData} />}
-        <div className="bg-white shadow-md rounded overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200" {...getTableProps()}>
-            <thead className="bg-gray-50">
-              {headerGroups.map((headerGroup) => (
-                <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column) => {
-                    const { key, ...rest } = column.getHeaderProps();
-                    return (
-                      <th
-                        key={key}
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        {...rest}
-                      >
-                        {column.render('Header')}
-                      </th>
-                    );
-                  })}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200" {...getTableBodyProps()}>
-              {rows.map((row) => {
-                prepareRow(row);
-                return (
-                  <tr key={row.id} {...row.getRowProps()}>
-                    {row.cells.map((cell) => {
-                      const { key, ...rest } = cell.getCellProps();
+      {questions.length === 0 ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="w-full max-w-4xl">
+          <h1 className="text-3xl font-bold text-gray-800 mb-8">Welcome, {user.username}</h1>
+          <div className="flex justify-between items-center">
+            <button type="button" onClick={handleAddNew} className="mb-4 bg-green-500 text-white py-1 px-2 rounded">+ Add</button>
+            <button type="button" onClick={handleLogout} className="text-theme-ENRI py-2 px-4 rounded"><i class="fa-solid fa-right-from-bracket"></i></button>
+          </div>
+          
+          {isFormVisible && (
+            <form onSubmit={handleFormSubmit} className="mb-4">
+              <div className="mb-4">
+                <label htmlFor="questionText" className="block text-sm font-medium text-gray-700">Question</label>
+                <input
+                  type="text"
+                  id="questionText"
+                  name="questionText"
+                  defaultValue={formInitialData.questionText}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  required
+                />
+              </div>
+              <div className="flex space-x-2">
+                <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">Save</button>
+                <button type="button" onClick={() => setIsFormVisible(false)} className="bg-gray-500 text-white py-2 px-4 rounded">Cancel</button>
+              </div>
+            </form>
+          )}
+          <div className="bg-white shadow-md rounded overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200" {...getTableProps()}>
+              <thead className="bg-gray-50">
+                {headerGroups.map((headerGroup) => (
+                  <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column) => {
+                      const { key, ...rest } = column.getHeaderProps();
                       return (
-                        <td
+                        <th
                           key={key}
-                          className={`px-6 py-4 whitespace-nowrap ${cell.column.Header === 'Action' ? 'w-1/6' : ''}`}
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                           {...rest}
                         >
-                          {cell.render('Cell')}
-                        </td>
+                          {column.render('Header')}
+                        </th>
                       );
                     })}
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                ))}
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200" {...getTableBodyProps()}>
+                {rows.map((row) => {
+                  prepareRow(row);
+                  return (
+                    <tr className="" key={row.id} {...row.getRowProps()}>
+                      {row.cells.map((cell) => {
+                        const { key, ...rest } = cell.getCellProps();
+                        return (
+                          <td
+                            key={key}
+                            className={`px-6 py-4 whitespace-nowrap ${cell.column.Header === 'Action' ? 'w-1/6' : ''}`}
+                            {...rest}
+                          >
+                            {cell.render('Cell')}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

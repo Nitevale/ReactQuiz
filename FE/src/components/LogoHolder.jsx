@@ -1,5 +1,5 @@
 import React from "react";
-import erniLogo from "../assets/ERNILOGO1.png";
+import erniLogo from "../assets/ERNILOGO2.png";
 
 const LogoHolder = () => {
   return (
