@@ -2,8 +2,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../redux/authSlice";
-import SideLogo from "./LogoHolder.jsx";
+import { login } from "../redux/authSlice.js";
+import SideLogo from "../components/LogoHolder.jsx";
 
 const LoginPage = () => {
   const {

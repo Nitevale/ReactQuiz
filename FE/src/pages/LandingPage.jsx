@@ -1,5 +1,5 @@
 import React from "react";
-import SideLogo from "./LogoHolder.jsx";
+import SideLogo from "../components/LogoHolder.jsx";
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {

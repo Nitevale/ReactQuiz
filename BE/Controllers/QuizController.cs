@@ -32,7 +32,7 @@ namespace BE.Controllers
                 QuestionText = q.QuestionText,
                 Choices = q.Choices.Select(c => new ChoiceDTO
                 {
-                    ChoiceId = c.ChoiceId,
+                    ChoiceId = c.ChoiceID,
                     ChoiceText = c.ChoiceText,
                     IsCorrect = c.IsCorrect
                 }).ToList()
@@ -60,7 +60,7 @@ namespace BE.Controllers
                 QuestionText = question.QuestionText,
                 Choices = question.Choices.Select(c => new ChoiceDTO
                 {
-                    ChoiceId = c.ChoiceId,
+                    ChoiceId = c.ChoiceID,
                     ChoiceText = c.ChoiceText,
                     IsCorrect = c.IsCorrect
                 }).ToList()
@@ -97,7 +97,7 @@ namespace BE.Controllers
                 QuestionText = question.QuestionText,
                 Choices = question.Choices.Select(c => new ChoiceDTO
                 {
-                    ChoiceId = c.ChoiceId,
+                    ChoiceId = c.ChoiceID,
                     ChoiceText = c.ChoiceText,
                     IsCorrect = c.IsCorrect
                 }).ToList()
@@ -140,7 +140,7 @@ namespace BE.Controllers
                 QuestionText = question.QuestionText,
                 Choices = question.Choices.Select(c => new ChoiceDTO
                 {
-                    ChoiceId = c.ChoiceId,
+                    ChoiceId = c.ChoiceID,
                     ChoiceText = c.ChoiceText,
                     IsCorrect = c.IsCorrect
                 }).ToList()

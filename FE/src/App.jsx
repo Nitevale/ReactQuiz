@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
-import LoginPage from "./components/LoginPage";
-import LandingPage from "./components/LandingPage";
-import ExaminerPage from "./components/ExaminerPage";
+import LoginPage from "./pages/LoginPage";
+import LandingPage from "./pages/LandingPage";
+import ExaminerPage from "./pages/ExaminerPage";
 
 const App = () => {
   return (
