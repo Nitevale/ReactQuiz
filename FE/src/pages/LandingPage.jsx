@@ -6,10 +6,13 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-center min-h-screen py-16 px-4 bg-wallpaper">
+    <div
+      className="flex items-center justify-center 
+      min-h-screen py-16 px-4 max-sm:py-24"
+    >
       <div className="overflow-hidden w-full max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row">
-          <SideLogo/>
+          <SideLogo />
           <div className="w-full md:w-1/2 p-6 flex flex-col items-center justify-center text-center">
             <h2 className="text-3xl md:text-4xl font-semibold mb-4">
               Welcome to Quiz
