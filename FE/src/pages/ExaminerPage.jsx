@@ -23,25 +23,12 @@ const ExaminerPage = () => {
   const [formInitialData, setFormInitialData] = useState({ questionText: "" });
   const [viewData, setViewData] = useState({ questionText: "" });
   const [isEditMode, setIsEditMode] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
     if (questionsStatus === "idle") {
       dispatch(fetchQuestions());
     }
-
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [user, questionsStatus, dispatch, navigate]);
+  }, [questions, questionsStatus, dispatch, navigate]);
 
   const handleAddNew = () => {
     setFormInitialData({ questionText: "", choices: "" });
@@ -69,8 +56,9 @@ const ExaminerPage = () => {
     setIsEditMode(false);
   };
 
-  const handleDelete = (id) => {
-    dispatch(deleteQuestion(id));
+  const handleDelete = async(id) => {
+    await dispatch(deleteQuestion(id));
+    location.href = "http://localhost:5173/examiner";
   };
 
   const handleLogout = () => {
@@ -91,16 +79,10 @@ const ExaminerPage = () => {
         accessor: "action",
         Cell: ({ row }) => (
           <div className="flex space-x-4 justify-end items-center">
-            <button
-              type="button"
-              onClick={() => handleView(row.original.questionID)}
-            >
+            <button onClick={() => handleView(row.original.questionID)}>
               <i className="fa-solid fa-eye text-theme-ERNI"></i>
             </button>
-            <button
-              type="button"
-              onClick={() => handleDelete(row.original.questionID)}
-            >
+            <button onClick={() => handleDelete(row.original.questionID)}>
               <i className="fa-solid fa-trash text-red-500"></i>
             </button>
           </div>
@@ -116,9 +98,14 @@ const ExaminerPage = () => {
 
   const handleView = (id) => {
     const questionToView = questions.find((q) => q.questionID === id);
-    setViewData(questionToView);
-    setIsViewModalOpen(true);
-    setIsEditMode(false);
+    if (questionToView) {
+      setViewData(questionToView);
+      setIsViewModalOpen(true);
+      setIsEditMode(false);
+      console.log(questionToView);
+    } else {
+      console.error("Question not found:", id);
+    }
   };
 
   const toggleEditMode = () => {
@@ -127,9 +114,9 @@ const ExaminerPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center px-8 py-36 max-sm:py-36">
+    <div className="flex flex-col items-center justify-center px-8 py-40 max-sm:py-36">
       <div className="w-full max-w-4xl ">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8 max-sm:text-2xl">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8 max-sm:text-2xl max-sm:text-center">
           Welcome, {user ? user.username : "Guest"}
         </h1>
         <div className="flex justify-between items-center">
@@ -141,7 +128,6 @@ const ExaminerPage = () => {
             + Add
           </button>
           <button
-            type="button"
             onClick={handleLogout}
             className="mb-4 text-theme-base py-1 px-2 rounded"
           >
@@ -172,12 +158,8 @@ const ExaminerPage = () => {
             />
           ) : (
             <div>
-              <QuestionForm
-                initialData={viewData}
-                readOnly={true}
-              />
+              <QuestionForm initialData={viewData} readOnly={true} />
               <button
-                type="button"
                 onClick={toggleEditMode}
                 className="mt-4 bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-400"
               >
@@ -189,33 +171,6 @@ const ExaminerPage = () => {
 
         {questions.length === 0 ? (
           <p>Loading...</p>
-        ) : isMobile ? (
-          <div className="grid grid-cols-1 gap-4">
-            {questions.map((question) => (
-              <div
-                key={question.questionID}
-                className="bg-white shadow-md rounded p-4"
-              >
-                <h2 className="text-lg font-semibold mb-2">
-                  {question.questionText}
-                </h2>
-                <div className="flex justify-end space-x-4">
-                  <button
-                    type="button"
-                    onClick={() => handleView(question.questionID)}
-                  >
-                    <i className="fa-solid fa-eye text-theme-ERNI"></i>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(question.questionID)}
-                  >
-                    <i className="fa-solid fa-trash text-red-500"></i>
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
         ) : (
           <div className="bg-white shadow-md rounded overflow-hidden">
             <div className="overflow-x-auto">

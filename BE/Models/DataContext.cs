@@ -6,7 +6,6 @@ namespace BE.Models
     public class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-
         public DbSet<QuestionEntity> Questions { get; set; }
         public DbSet<Choice> Choices { get; set; }
         public DbSet<UserEntity> User { get; set; }

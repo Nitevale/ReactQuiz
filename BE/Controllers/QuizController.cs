@@ -151,7 +151,7 @@ namespace BE.Controllers
 
         // DELETE: api/quiz/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteQuestion(Guid id)
+        public async Task<IActionResult> DeleteQuestion(int id)
         {
             var question = await _context.Questions.FindAsync(id);
             if (question == null)

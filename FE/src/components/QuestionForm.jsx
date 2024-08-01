@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 
-const QuestionForm = ({ onSubmit, initialData = {} }) => {
+const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
   const [questionText, setQuestionText] = useState(
     initialData.questionText || ""
   );
   const [choices, setChoices] = useState(
-    initialData.choices || [{ choiceText: "", isCorrect: false }, { choiceText: "", isCorrect: false }, { choiceText: "", isCorrect: false }, { choiceText: "", isCorrect: false }]
+    initialData.choices || [
+      { choiceText: "", isCorrect: false },
+      { choiceText: "", isCorrect: false },
+      { choiceText: "", isCorrect: false },
+      { choiceText: "", isCorrect: false },
+    ]
   );
   const [correctAnswer, setCorrectAnswer] = useState(
     initialData.correctAnswer || ""
@@ -13,9 +18,9 @@ const QuestionForm = ({ onSubmit, initialData = {} }) => {
 
   useEffect(() => {
     if (initialData.choices && initialData.choices.length > 0) {
-      const formattedChoices = initialData.choices.map(choice => ({
+      const formattedChoices = initialData.choices.map((choice) => ({
         choiceText: choice.choiceText,
-        isCorrect: choice.choiceText === initialData.correctAnswer
+        isCorrect: choice.choiceText === initialData.correctAnswer,
       }));
       setChoices(formattedChoices);
     }
@@ -45,47 +50,80 @@ const QuestionForm = ({ onSubmit, initialData = {} }) => {
     e.preventDefault();
     onSubmit({
       questionText,
-      choices
+      choices,
     });
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-4">
-      <div className="mt-5">
-        <label className="block text-center text-lg font-medium">Question:</label>
+      <div className="">
+        <label className="block text-center text-lg font-medium">
+          Question:
+        </label>
         <textarea
           type="text"
+          required
           value={questionText}
           onChange={(e) => setQuestionText(e.target.value)}
-          className="border border-gray-300 w-full min-h-16 max-h-16 mt-2 p-2 rounded-md resize-none"
+          className={`border border-gray-300 w-full min-h-24 max-h-24 mt-2 p-2 rounded-md resize-none ${
+            readOnly ? "bg-gray-100" : ""
+          }`}
+          readOnly={readOnly}
         />
       </div>
       <div className="mt-4">
-        <p className="text-center text-lg font-medium mb-2">Choices (Click the correct answer):</p>
+        <p className="text-center text-lg font-medium mb-2">
+          Choices (Click the correct answer):
+        </p>
         {choices.map((choice, index) => (
           <div key={index} className="flex items-center my-2">
-            <input
-              type="radio"
-              name="correctAnswer"
-              checked={choice.isCorrect}
-              onChange={() => handleCorrectAnswerChange(index)}
-              className="mr-2"
-            />
+            {!readOnly && (
+              <div className="relative mr-2">
+                <input
+                  required
+                  type="radio"
+                  name="correctAnswer"
+                  checked={choice.isCorrect}
+                  onChange={() => handleCorrectAnswerChange(index)}
+                  className="absolute opacity-0 w-0 h-0"
+                />
+                <div
+                  className={`w-6 h-6 border border-gray-300 rounded-full cursor-pointer ${
+                    choice.isCorrect ? "bg-green-500" : "bg-white"
+                  } flex items-center justify-center`}
+                  onClick={() => handleCorrectAnswerChange(index)}
+                >
+                  {choice.isCorrect && (
+                    <span className="text-white text-xs">✔</span>
+                  )}
+                </div>
+              </div>
+            )}
             <input
               type="text"
+              required
               value={choice.choiceText}
               onChange={(e) => handleChoiceChange(index, e.target.value)}
-              className="border border-gray-300 bg-transparent rounded w-full p-2"
+              className={`border ${
+                choice.isCorrect && readOnly
+                  ? "border-green-500"
+                  : "border-gray-300"
+              } bg-transparent rounded w-full p-2 ${
+                readOnly ? "bg-gray-100" : ""
+              }`}
+              readOnly={readOnly}
             />
           </div>
         ))}
       </div>
-      <button
-        type="submit"
-        className="mt-4 bg-green-500 text-white rounded px-4 py-2 font-semibold hover:bg-green-400 w-full"
-      >
-        Submit
-      </button>
+      {!readOnly ? (
+        <button
+          type="submit"
+          className="mt-4 bg-green-500 text-white rounded px-4 py-2 font-semibold hover:bg-green-400 w-full"
+        >
+          Add
+        </button>
+      ) : null}
     </form>
   );
 };
