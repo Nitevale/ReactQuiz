@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
 import ExaminerPage from "./pages/ExaminerPage";
+import ExamineePage from "./pages/ExamineePage";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/examiner" element={<ExaminerPage />} />
+          <Route path="/examinee" element={<ExamineePage />} />
         </Routes>
     </Router>
   );

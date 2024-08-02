@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ const LoginPage = () => {
   } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSubmit = (data) => {
     const hardcodedAdmin = {
@@ -20,15 +21,21 @@ const LoginPage = () => {
       password: "pass123",
     };
 
-    if (
-      data.username === hardcodedAdmin.username &&
-      data.password === hardcodedAdmin.password
-    ) {
+    const hardcodedUser = {
+      username: "user",
+      password: "user",
+    };
+
+    if (data.username === hardcodedAdmin.username && data.password === hardcodedAdmin.password) {
       dispatch(login({ username: data.username }));
       console.log("Login dispatched, navigating to /examiner");
       navigate("/examiner");
+    } else if (data.username === hardcodedUser.username && data.password === hardcodedUser.password) {
+      dispatch(login({ username: data.username }));
+      console.log("Login dispatched, navigating to /examinee");
+      navigate("/examinee");
     } else {
-      alert("Invalid credentials");
+      setErrorMessage("Invalid credentials");
     }
   };
 
@@ -40,6 +47,9 @@ const LoginPage = () => {
       <div className="flex flex-col md:flex-row w-full max-w-4xl mx-auto overflow-hidden">
         <SideLogo />
         <div className="w-full md:w-1/2 p-6 flex flex-col items-center justify-center">
+          {errorMessage && (
+            <span className="text-red-500 mb-4">{errorMessage}</span>
+          )}
           <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
             <div className="mb-4">
               <label

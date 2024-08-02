@@ -62,6 +62,7 @@ const ExaminerPage = () => {
   const handleView = (question) => {
     setViewData(question);
     setIsViewModalOpen(true);
+    setIsEditMode(false);
   };
 
   const toggleEditMode = () => {
@@ -113,10 +114,16 @@ const ExaminerPage = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout(user));
+    dispatch(logout());
     navigate("/login");
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setIsViewModalOpen(false);
+    setIsEditMode(false);
+  };
+  
   return (
     <div className="flex flex-col items-center justify-center px-8 py-40 max-sm:py-36">
       <div className="w-full max-w-4xl">
@@ -140,8 +147,8 @@ const ExaminerPage = () => {
 
         <AddModal
           isOpen={isModalOpen}
-          onRequestClose={() => setIsModalOpen(false)}
-          onClick={() => setIsModalOpen(false)}
+          onRequestClose={handleCloseModal}
+          onClick={handleCloseModal}
         >
           <QuestionForm
             onSubmit={handleFormSubmit}
@@ -151,8 +158,8 @@ const ExaminerPage = () => {
 
         <AddModal
           isOpen={isViewModalOpen}
-          onRequestClose={() => setIsViewModalOpen(false)}
-          onClick={() => setIsViewModalOpen(false)}
+          onRequestClose={handleCloseModal}
+          onClick={handleCloseModal}
         >
           {isEditMode ? (
             <QuestionForm

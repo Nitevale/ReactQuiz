@@ -14,15 +14,12 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
           { choiceText: "", isCorrect: false },
         ]
   );
-  const [correctAnswer, setCorrectAnswer] = useState(
-    initialData.correctAnswer || ""
-  );
 
   useEffect(() => {
     if (initialData.choices && initialData.choices.length > 0) {
       const formattedChoices = initialData.choices.map((choice) => ({
         choiceText: choice.choiceText,
-        isCorrect: choice.choiceText === initialData.correctAnswer,
+        isCorrect: choice.isCorrect || false,
       }));
       setChoices(formattedChoices);
     }
@@ -31,11 +28,6 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
   const handleChoiceChange = (index, value) => {
     const newChoices = [...choices];
     newChoices[index].choiceText = value;
-    if (newChoices[index].choiceText === correctAnswer) {
-      newChoices[index].isCorrect = true;
-    } else {
-      newChoices[index].isCorrect = false;
-    }
     setChoices(newChoices);
   };
 
@@ -45,7 +37,6 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
       choice.isCorrect = i === index;
     });
     setChoices(newChoices);
-    setCorrectAnswer(newChoices[index].choiceText);
   };
 
   const handleSubmit = (e) => {
@@ -74,9 +65,7 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
         />
       </div>
       <div className="mt-4">
-        <p className="text-center text-lg font-medium mb-2">
-          Choices (Click the correct answer):
-        </p>
+        <p className="text-center text-lg font-medium mb-2">Choices:</p>
         {choices.map((choice, index) => (
           <div key={index} className="flex items-center my-2">
             {!readOnly && (
@@ -108,7 +97,7 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
               onChange={(e) => handleChoiceChange(index, e.target.value)}
               className={`border ${
                 choice.isCorrect && readOnly
-                  ? "border-green-500"
+                  ? "border-green-500 outline outline-green-500"
                   : "border-gray-300"
               } bg-transparent rounded w-full p-2 ${
                 readOnly ? "bg-gray-100" : ""
