@@ -5,12 +5,14 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
     initialData.questionText || ""
   );
   const [choices, setChoices] = useState(
-    initialData.choices || [
-      { choiceText: "", isCorrect: false },
-      { choiceText: "", isCorrect: false },
-      { choiceText: "", isCorrect: false },
-      { choiceText: "", isCorrect: false },
-    ]
+    initialData.choices && initialData.choices.length > 0
+      ? initialData.choices
+      : [
+          { choiceText: "", isCorrect: false },
+          { choiceText: "", isCorrect: false },
+          { choiceText: "", isCorrect: false },
+          { choiceText: "", isCorrect: false },
+        ]
   );
   const [correctAnswer, setCorrectAnswer] = useState(
     initialData.correctAnswer || ""

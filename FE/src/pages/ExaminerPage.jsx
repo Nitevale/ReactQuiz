@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
-import { logout } from "../redux/authSlice";
-import {
-  fetchQuestions,
-  createQuestion,
-  updateQuestion,
-  deleteQuestion,
-} from "../redux/questionsSlice";
+import axios from "axios";
+import { logout } from "../redux/authSlice"
 import QuestionForm from "../components/QuestionForm";
 import AddModal from "../components/CreateModal";
+
+const API_URL = 'http://localhost:5297/api/Quiz';
 
 const ExaminerPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
-  const questions = useSelector((state) => state.questions.questions);
-  const questionsStatus = useSelector((state) => state.questions.status);
+  const [questions, setQuestions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [formInitialData, setFormInitialData] = useState({ questionText: "" });
@@ -25,53 +21,21 @@ const ExaminerPage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
-    if (questionsStatus === "idle") {
-      dispatch(fetchQuestions());
-    }
-  }, [questions, questionsStatus, dispatch, navigate]);
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get(API_URL);
+        setQuestions(response.data);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      }
+    };
 
-  const handleAddNew = () => {
-    setFormInitialData({ questionText: "", choices: "" });
-    setIsModalOpen(true);
-  };
+    fetchQuestions();
+  }, []);
 
-  const handleEdit = (id) => {
-    const questionToEdit = questions.find((q) => q.questionID === id);
-    setFormInitialData(questionToEdit);
-    setIsModalOpen(true);
-  };
+  const data = useMemo(() => (Array.isArray(questions) ? questions : []), [questions]);
 
-  const handleFormSubmit = (questionData) => {
-    if (formInitialData.questionID) {
-      dispatch(
-        updateQuestion({
-          id: formInitialData.questionID,
-          question: questionData,
-        })
-      );
-    } else {
-      dispatch(createQuestion(questionData));
-    }
-    setIsModalOpen(false);
-    setIsEditMode(false);
-  };
-
-  const handleDelete = async(id) => {
-    await dispatch(deleteQuestion(id));
-    location.href = "http://localhost:5173/examiner";
-  };
-
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
-  };
-
-  const data = React.useMemo(
-    () => (Array.isArray(questions) ? questions : []),
-    [questions]
-  );
-
-  const columns = React.useMemo(
+  const columns = useMemo(
     () => [
       { Header: "Questions", accessor: "questionText" },
       {
@@ -79,7 +43,7 @@ const ExaminerPage = () => {
         accessor: "action",
         Cell: ({ row }) => (
           <div className="flex space-x-4 justify-end items-center">
-            <button onClick={() => handleView(row.original.questionID)}>
+            <button onClick={() => handleView(row.original)}>
               <i className="fa-solid fa-eye text-theme-ERNI"></i>
             </button>
             <button onClick={() => handleDelete(row.original.questionID)}>
@@ -93,35 +57,74 @@ const ExaminerPage = () => {
     []
   );
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
 
-  const handleView = (id) => {
-    const questionToView = questions.find((q) => q.questionID === id);
-    if (questionToView) {
-      setViewData(questionToView);
-      setIsViewModalOpen(true);
-      setIsEditMode(false);
-      console.log(questionToView);
-    } else {
-      console.error("Question not found:", id);
-    }
+  const handleView = (question) => {
+    setViewData(question);
+    setIsViewModalOpen(true);
   };
 
   const toggleEditMode = () => {
-    setIsEditMode((prevMode) => !prevMode);
     setFormInitialData(viewData);
+    setIsEditMode(!isEditMode);
+  };
+
+  const handleFormSubmit = async (updatedQuestion) => {
+    try {
+      if (isEditMode) {
+        await axios.put(`${API_URL}/${viewData.questionID}`, updatedQuestion);
+        setQuestions((prevQuestions) =>
+          prevQuestions.map((q) =>
+            q.questionID === viewData.questionID ? updatedQuestion : q
+          )
+        );
+      } else {
+        const response = await axios.post(API_URL, updatedQuestion);
+        setQuestions([...questions, response.data]);
+      }
+      setIsModalOpen(false);
+      setIsViewModalOpen(false);
+      setIsEditMode(false);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  const handleDelete = async (questionID) => {
+    try {
+      await axios.delete(`${API_URL}/${questionID}`);
+      setQuestions((prevQuestions) =>
+        prevQuestions.filter((q) => q.questionID !== questionID)
+      );
+    } catch (error) {
+      console.error("Error deleting question:", error);
+    }
+  };
+
+  const handleAddNew = () => {
+    setFormInitialData({ questionText: "", choices: [
+      { choiceText: "", isCorrect: false },
+      { choiceText: "", isCorrect: false },
+      { choiceText: "", isCorrect: false },
+      { choiceText: "", isCorrect: false }
+    ]});
+    setIsModalOpen(true);
+    setIsEditMode(false);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout(user));
+    navigate("/login");
   };
 
   return (
     <div className="flex flex-col items-center justify-center px-8 py-40 max-sm:py-36">
-      <div className="w-full max-w-4xl ">
+      <div className="w-full max-w-4xl">
         <h1 className="text-3xl font-bold text-gray-800 mb-8 max-sm:text-2xl max-sm:text-center">
           Welcome, {user ? user.username : "Guest"}
         </h1>
         <div className="flex justify-between items-center">
           <button
-            type="button"
             onClick={handleAddNew}
             className="mb-4 bg-green-500 text-white py-1 px-2 rounded hover:bg-green-400"
           >
@@ -216,7 +219,7 @@ const ExaminerPage = () => {
                             <td
                               key={key}
                               className={`px-6 py-4 whitespace-nowrap ${
-                                cell.column.Header === "Action" ? "w-1/6" : ""
+                                cell.column.Header === "Actions" ? "w-1/6" : ""
                               }`}
                               {...restCellProps}
                             >
