@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
 import axios from "axios";
-import { logout } from "../redux/authSlice"
+import { logout } from "../redux/authSlice";
 import QuestionForm from "../components/QuestionForm";
 import AddModal from "../components/CreateModal";
 
@@ -14,6 +14,7 @@ const ExaminerPage = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [formInitialData, setFormInitialData] = useState({ questionText: "" });
@@ -27,6 +28,8 @@ const ExaminerPage = () => {
         setQuestions(response.data);
       } catch (error) {
         console.error("Error fetching questions:", error);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
       }
     };
 
@@ -60,6 +63,7 @@ const ExaminerPage = () => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
 
   const handleView = (question) => {
+    console.log("Viewing question:", question); // Add console log
     setViewData(question);
     setIsViewModalOpen(true);
     setIsEditMode(false);
@@ -76,7 +80,7 @@ const ExaminerPage = () => {
         await axios.put(`${API_URL}/${viewData.questionID}`, updatedQuestion);
         setQuestions((prevQuestions) =>
           prevQuestions.map((q) =>
-            q.questionID === viewData.questionID ? updatedQuestion : q
+            q.questionID === viewData.questionID ? { ...updatedQuestion, questionID: viewData.questionID } : q
           )
         );
       } else {
@@ -92,6 +96,7 @@ const ExaminerPage = () => {
   };
 
   const handleDelete = async (questionID) => {
+    console.log("Deleting question with ID:", questionID); // Add console log
     try {
       await axios.delete(`${API_URL}/${questionID}`);
       setQuestions((prevQuestions) =>
@@ -123,7 +128,7 @@ const ExaminerPage = () => {
     setIsViewModalOpen(false);
     setIsEditMode(false);
   };
-  
+
   return (
     <div className="flex flex-col items-center justify-center px-8 py-40 max-sm:py-36">
       <div className="w-full max-w-4xl">
@@ -179,43 +184,47 @@ const ExaminerPage = () => {
           )}
         </AddModal>
 
-        {questions.length === 0 ? (
-          <p>Loading...</p>
-        ) : (
-          <div className="bg-white shadow-md rounded overflow-hidden">
-            <div className="overflow-x-auto">
-              <table
-                className="min-w-full divide-y divide-gray-200"
-                {...getTableProps()}
+        <div className="bg-white shadow-md rounded overflow-hidden">
+          <div className="overflow-x-auto">
+            <table
+              className="min-w-full divide-y divide-gray-200"
+              {...getTableProps()}
+            >
+              <thead className="bg-gray-50">
+                {headerGroups.map((headerGroup) => {
+                  const { key, ...restHeaderGroupProps } =
+                    headerGroup.getHeaderGroupProps();
+                  return (
+                    <tr key={key} {...restHeaderGroupProps}>
+                      {headerGroup.headers.map((column) => {
+                        const { key, ...restColumnProps } =
+                          column.getHeaderProps();
+                        return (
+                          <th
+                            key={key}
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            {...restColumnProps}
+                          >
+                            {column.render("Header")}
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </thead>
+              <tbody
+                className="bg-white divide-y divide-gray-200"
+                {...getTableBodyProps()}
               >
-                <thead className="bg-gray-50">
-                  {headerGroups.map((headerGroup) => {
-                    const { key, ...restHeaderGroupProps } =
-                      headerGroup.getHeaderGroupProps();
-                    return (
-                      <tr key={key} {...restHeaderGroupProps}>
-                        {headerGroup.headers.map((column) => {
-                          const { key, ...restColumnProps } =
-                            column.getHeaderProps();
-                          return (
-                            <th
-                              key={key}
-                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                              {...restColumnProps}
-                            >
-                              {column.render("Header")}
-                            </th>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
-                </thead>
-                <tbody
-                  className="bg-white divide-y divide-gray-200"
-                  {...getTableBodyProps()}
-                >
-                  {rows.map((row) => {
+                {loading ? (
+                  <tr>
+                    <td colSpan={columns.length} className="text-center py-4">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : (
+                  rows.map((row) => {
                     prepareRow(row);
                     const { key, ...restRowProps } = row.getRowProps();
                     return (
@@ -236,12 +245,12 @@ const ExaminerPage = () => {
                         })}
                       </tr>
                     );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
