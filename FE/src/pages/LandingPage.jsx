@@ -23,16 +23,29 @@ const LandingPage = () => {
               How well do you know the
               <span className="text-theme-ERNI"> ERNI</span> Bootcampers?
             </p>
+            <div className="flex flex-row gap-4
+            max-sm:flex-col">
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/examinee")}
               className="px-6 py-3 bg-theme-ERNI text-white 
               border border-theme-ERNI 
               hover:bg-white hover:text-theme-ERNI 
               font-semibold rounded-lg shadow-md 
               transition duration-300 ease-in-out"
             >
-              Get Started
+              Take Quiz
             </button>
+            <button
+              onClick={() => navigate("/login")}
+              className="px-6 py-3 bg-white-ERNI text-theme-ERNI 
+              border border-theme-ERNI 
+              hover:bg-theme-ERNI hover:text-white
+              font-semibold rounded-lg shadow-md 
+              transition duration-300 ease-in-out"
+            >
+              Add a Question
+            </button>
+            </div>
           </div>
         </div>
       </div>

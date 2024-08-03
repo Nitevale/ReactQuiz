@@ -6,9 +6,8 @@ namespace BE.Models.Domain
     {
         [Key]
         public int QuestionID { get; set; }  // Primary Key
-        public required string QuestionText { get; set; }  // Text of the question
+        public required string QuestionText { get; set; }
 
-        // Navigation property to related choices
         public ICollection<Choice> Choices { get; set; }
 
         // public Question()

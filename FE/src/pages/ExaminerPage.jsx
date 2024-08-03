@@ -6,20 +6,27 @@ import axios from "axios";
 import { logout } from "../redux/authSlice";
 import QuestionForm from "../components/QuestionForm";
 import AddModal from "../components/CreateModal";
+import ConfirmationModal from "../components/ConfirmationModal";
 
-const API_URL = 'http://localhost:5297/api/Quiz';
+const API_URL = "http://localhost:5297/api/Quiz";
 
 const ExaminerPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const [questions, setQuestions] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [formInitialData, setFormInitialData] = useState({ questionText: "" });
   const [viewData, setViewData] = useState({ questionText: "" });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [onConfirmAction, setOnConfirmAction] = useState(() => {});
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -29,14 +36,17 @@ const ExaminerPage = () => {
       } catch (error) {
         console.error("Error fetching questions:", error);
       } finally {
-        setLoading(false); // Set loading to false after data is fetched
+        setLoading(false);
       }
     };
 
     fetchQuestions();
   }, []);
 
-  const data = useMemo(() => (Array.isArray(questions) ? questions : []), [questions]);
+  const data = useMemo(
+    () => (Array.isArray(questions) ? questions : []),
+    [questions]
+  );
 
   const columns = useMemo(
     () => [
@@ -47,10 +57,10 @@ const ExaminerPage = () => {
         Cell: ({ row }) => (
           <div className="flex space-x-4 justify-end items-center">
             <button onClick={() => handleView(row.original)}>
-              <i className="fa-solid fa-eye text-theme-ERNI"></i>
+              <i className="fa-solid fa-eye text-theme-ERNI hover:text-blue-500"></i>
             </button>
-            <button onClick={() => handleDelete(row.original.questionID)}>
-              <i className="fa-solid fa-trash text-red-500"></i>
+            <button onClick={() => confirmDelete(row.original.questionID)}>
+              <i className="fa-solid fa-trash text-red-500 hover:text-red-300"></i>
             </button>
           </div>
         ),
@@ -60,10 +70,11 @@ const ExaminerPage = () => {
     []
   );
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({ columns, data });
 
   const handleView = (question) => {
-    console.log("Viewing question:", question); // Add console log
+    console.log("Viewing question:", question);
     setViewData(question);
     setIsViewModalOpen(true);
     setIsEditMode(false);
@@ -77,12 +88,24 @@ const ExaminerPage = () => {
   const handleFormSubmit = async (updatedQuestion) => {
     try {
       if (isEditMode) {
-        await axios.put(`${API_URL}/${viewData.questionID}`, updatedQuestion);
+        const questionToUpdate = {
+          ...updatedQuestion,
+          choices: updatedQuestion.choices.map((choice, index) => ({
+            ...viewData.choices[index],
+            choiceText: choice.choiceText,
+            isCorrect: choice.isCorrect,
+          })),
+        };
+
+        await axios.put(`${API_URL}/${viewData.questionID}`, questionToUpdate);
         setQuestions((prevQuestions) =>
           prevQuestions.map((q) =>
-            q.questionID === viewData.questionID ? { ...updatedQuestion, questionID: viewData.questionID } : q
+            q.questionID === viewData.questionID
+              ? { ...questionToUpdate, questionID: viewData.questionID }
+              : q
           )
         );
+        console.log("Payload to be sent:", questionToUpdate);
       } else {
         const response = await axios.post(API_URL, updatedQuestion);
         setQuestions([...questions, response.data]);
@@ -95,32 +118,48 @@ const ExaminerPage = () => {
     }
   };
 
+  const confirmDelete = (questionID) => {
+    setConfirmationMessage("Are you sure you want to delete this question?");
+    setOnConfirmAction(() => () => handleDelete(questionID));
+    setIsConfirmationOpen(true);
+  };
+
   const handleDelete = async (questionID) => {
-    console.log("Deleting question with ID:", questionID); // Add console log
+    console.log("Deleting question with ID:", questionID);
     try {
       await axios.delete(`${API_URL}/${questionID}`);
       setQuestions((prevQuestions) =>
         prevQuestions.filter((q) => q.questionID !== questionID)
       );
+      setIsConfirmationOpen(false);
     } catch (error) {
       console.error("Error deleting question:", error);
     }
   };
 
-  const handleAddNew = () => {
-    setFormInitialData({ questionText: "", choices: [
-      { choiceText: "", isCorrect: false },
-      { choiceText: "", isCorrect: false },
-      { choiceText: "", isCorrect: false },
-      { choiceText: "", isCorrect: false }
-    ]});
-    setIsModalOpen(true);
-    setIsEditMode(false);
+  const confirmLogout = () => {
+    setConfirmationMessage("Are you sure you want to log out?");
+    setOnConfirmAction(() => handleLogout);
+    setIsConfirmationOpen(true);
   };
 
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
+  };
+
+  const handleAddNew = () => {
+    setFormInitialData({
+      questionText: "",
+      choices: [
+        { choiceText: "", isCorrect: false },
+        { choiceText: "", isCorrect: false },
+        { choiceText: "", isCorrect: false },
+        { choiceText: "", isCorrect: false },
+      ],
+    });
+    setIsModalOpen(true);
+    setIsEditMode(false);
   };
 
   const handleCloseModal = () => {
@@ -143,8 +182,8 @@ const ExaminerPage = () => {
             + Add
           </button>
           <button
-            onClick={handleLogout}
-            className="mb-4 text-theme-base py-1 px-2 rounded"
+            onClick={confirmLogout}
+            className="mb-4 text-theme-base py-1 px-2 rounded hover:text-black"
           >
             <i className="fa-solid fa-right-from-bracket"></i>
           </button>
@@ -176,7 +215,7 @@ const ExaminerPage = () => {
               <QuestionForm initialData={viewData} readOnly={true} />
               <button
                 onClick={toggleEditMode}
-                className="mt-4 bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-400"
+                className="w-full bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-400"
               >
                 Edit
               </button>
@@ -184,13 +223,20 @@ const ExaminerPage = () => {
           )}
         </AddModal>
 
+        <ConfirmationModal
+          isOpen={isConfirmationOpen}
+          onRequestClose={() => setIsConfirmationOpen(false)}
+          onConfirm={onConfirmAction}
+          message={confirmationMessage}
+        />
+
         <div className="bg-white shadow-md rounded overflow-hidden">
           <div className="overflow-x-auto">
             <table
-              className="min-w-full divide-y divide-gray-200"
+              className="min-w-full divide-y divide-gray-300 border border-gray-300"
               {...getTableProps()}
             >
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-100">
                 {headerGroups.map((headerGroup) => {
                   const { key, ...restHeaderGroupProps } =
                     headerGroup.getHeaderGroupProps();
@@ -214,7 +260,7 @@ const ExaminerPage = () => {
                 })}
               </thead>
               <tbody
-                className="bg-white divide-y divide-gray-200"
+                className="bg-white divide-y divide-gray-300"
                 {...getTableBodyProps()}
               >
                 {loading ? (
@@ -223,7 +269,7 @@ const ExaminerPage = () => {
                       Loading...
                     </td>
                   </tr>
-                ) : (
+                ) : rows.length > 0 ? (
                   rows.map((row) => {
                     prepareRow(row);
                     const { key, ...restRowProps } = row.getRowProps();
@@ -246,6 +292,12 @@ const ExaminerPage = () => {
                       </tr>
                     );
                   })
+                ) : (
+                  <tr>
+                    <td colSpan={columns.length} className="text-center py-4">
+                      No Data Found
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>

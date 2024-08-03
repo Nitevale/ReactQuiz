@@ -6,9 +6,8 @@ public class Choice
     [Key]
     public int ChoiceID { get; set; }  // Primary Key
     public int QuestionID { get; set; }  // Foreign Key
-    public required string ChoiceText { get; set; }  // Text of the choice
-    public required bool IsCorrect { get; set; }  // Indicator for the correct choice
+    public required string ChoiceText { get; set; }
+    public required bool IsCorrect { get; set; }
 
-    // Navigation property to the related question
     public QuestionEntity Question { get; set; }
 }

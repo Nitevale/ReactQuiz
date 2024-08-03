@@ -79,7 +79,7 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
                   className="absolute opacity-0 w-0 h-0"
                 />
                 <div
-                  className={`w-6 h-6 border border-gray-300 rounded-full cursor-pointer ${
+                  className={`w-6 h-6 border border-gray-400 rounded-full cursor-pointer ${
                     choice.isCorrect ? "bg-green-500" : "bg-white"
                   } flex items-center justify-center`}
                   onClick={() => handleCorrectAnswerChange(index)}
@@ -97,7 +97,7 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
               onChange={(e) => handleChoiceChange(index, e.target.value)}
               className={`border ${
                 choice.isCorrect && readOnly
-                  ? "border-green-500 outline outline-green-500"
+                  ? "border-green-300 outline outline-green-300"
                   : "border-gray-300"
               } bg-transparent rounded w-full p-2 ${
                 readOnly ? "bg-gray-100" : ""
@@ -110,7 +110,7 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
       {!readOnly ? (
         <button
           type="submit"
-          className="mt-4 bg-green-500 text-white rounded px-4 py-2 font-semibold hover:bg-green-400 w-full"
+          className="mt-4 bg-green-500 text-white rounded px-2 py-1 font-semibold hover:bg-green-400 w-full"
         >
           Add
         </button>
