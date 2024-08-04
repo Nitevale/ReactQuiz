@@ -68,14 +68,18 @@ namespace BE.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserDTO userDto)
         {
+            Console.WriteLine($"Received Username: {userDto.Username}, Password: {userDto.Password}");
+
             var user = _context.User.FirstOrDefault(x => x.Username == userDto.Username && x.Password == userDto.Password);
 
             if (user == null)
             {
+                Console.WriteLine("User not found or invalid credentials");
                 return Unauthorized("Invalid username or password.");
             }
 
             return Ok(new { Message = "Login successful", User = user.Role });
         }
+
     }
 }

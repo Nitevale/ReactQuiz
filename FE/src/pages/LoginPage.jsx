@@ -4,6 +4,9 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login } from "../redux/authSlice.js";
 import SideLogo from "../components/LogoHolder.jsx";
+import axios from "axios";
+
+const USER_API_URL = "http://localhost:5297/api/Quiz";
 
 const LoginPage = () => {
   const {
@@ -21,19 +24,10 @@ const LoginPage = () => {
       password: "pass123",
     };
 
-    const hardcodedUser = {
-      username: "user",
-      password: "user",
-    };
-
     if (data.username === hardcodedAdmin.username && data.password === hardcodedAdmin.password) {
       dispatch(login({ username: data.username }));
       console.log("Login dispatched, navigating to /examiner");
       navigate("/examiner");
-    } else if (data.username === hardcodedUser.username && data.password === hardcodedUser.password) {
-      dispatch(login({ username: data.username }));
-      console.log("Login dispatched, navigating to /examinee");
-      navigate("/examinee");
     } else {
       setErrorMessage("Invalid credentials");
     }

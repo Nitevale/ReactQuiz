@@ -233,7 +233,7 @@ const ExaminerPage = () => {
         <div className="bg-white shadow-md rounded overflow-hidden">
           <div className="overflow-x-auto">
             <table
-              className="min-w-full divide-y divide-gray-300 border border-gray-300"
+              className="min-w-full table-auto divide-y divide-gray-300 border border-gray-300"
               {...getTableProps()}
             >
               <thead className="bg-gray-100">
@@ -280,7 +280,7 @@ const ExaminerPage = () => {
                           return (
                             <td
                               key={key}
-                              className={`px-6 py-4 whitespace-nowrap ${
+                              className={`px-6 py-4 whitespace-normal break-words ${
                                 cell.column.Header === "Actions" ? "w-1/6" : ""
                               }`}
                               {...restCellProps}
