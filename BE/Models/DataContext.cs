@@ -19,8 +19,11 @@ namespace BE.Models
                 .HasForeignKey(c => c.QuestionID)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<UserEntity>().HasData(
+                new UserEntity { UserID = 1, Username = "examiner", Password = "1234", Role = "examiner" }
+            );
+
             base.OnModelCreating(modelBuilder);
         }
     }
-
 }

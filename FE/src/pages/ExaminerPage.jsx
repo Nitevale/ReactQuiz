@@ -29,6 +29,12 @@ const ExaminerPage = () => {
   const [onConfirmAction, setOnConfirmAction] = useState(() => {});
 
   useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(API_URL);
@@ -172,7 +178,7 @@ const ExaminerPage = () => {
     <div className="flex flex-col items-center justify-center px-8 py-40 max-sm:py-36">
       <div className="w-full max-w-4xl">
         <h1 className="text-3xl font-bold text-gray-800 mb-8 max-sm:text-2xl max-sm:text-center">
-          Welcome, {user ? user.username : "Guest"}
+          Welcome, {user}
         </h1>
         <div className="flex justify-between items-center">
           <button

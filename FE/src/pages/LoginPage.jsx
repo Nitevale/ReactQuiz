@@ -6,7 +6,7 @@ import { login } from "../redux/authSlice.js";
 import SideLogo from "../components/LogoHolder.jsx";
 import axios from "axios";
 
-const USER_API_URL = "http://localhost:5297/api/Quiz";
+const USER_API_URL = "http://localhost:5297/api/User";
 
 const LoginPage = () => {
   const {
@@ -18,20 +18,31 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = (data) => {
-    const hardcodedAdmin = {
-      username: "admin",
-      password: "pass123",
-    };
-
-    if (data.username === hardcodedAdmin.username && data.password === hardcodedAdmin.password) {
-      dispatch(login({ username: data.username }));
-      console.log("Login dispatched, navigating to /examiner");
-      navigate("/examiner");
-    } else {
-      setErrorMessage("Invalid credentials");
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post(`${USER_API_URL}/login`, {
+        username: data.username,
+        password: data.password,
+      });
+  
+      const { message, user: role } = response.data;
+  
+      if (message === "Login successful") {
+        dispatch(login({ username: data.username, role }));
+        console.log("Login successful, navigating to /examiner");
+        navigate("/examiner");
+      } else {
+        setErrorMessage("Unexpected response from server");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        setErrorMessage("Invalid username or password.");
+      } else {
+        console.error("Error logging in:", error);
+        setErrorMessage("An error occurred. Please try again later.");
+      }
     }
-  };
+  };  
 
   return (
     <div
