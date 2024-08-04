@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import NameBox from "../components/NameBox";
 import Lottie from "lottie-react";
@@ -20,6 +21,7 @@ const ExamineePage = () => {
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   const [score, setScore] = useState(0);
   const [leaderboard, setLeaderboard] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -138,7 +140,7 @@ const ExamineePage = () => {
   };
 
   const handleQuit = () => {
-    window.location.href = "/";
+    navigate("/");
   };
 
   return (
