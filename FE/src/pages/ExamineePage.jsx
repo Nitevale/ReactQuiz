@@ -128,12 +128,11 @@ const ExamineePage = () => {
   };
 
   const handleTryAgain = () => {
-    setIsNameBoxVisible(true);
+    setIsNameBoxVisible(false);
     setIsQuizFinished(false);
     setCurrentQuestionIndex(0);
     setSelectedAnswers({});
     setScore(0);
-    setLeaderboard([]);
     setProgress(0);
     setIsLoading(true);
   };
@@ -162,6 +161,18 @@ const ExamineePage = () => {
               onTryAgain={handleTryAgain}
               onQuit={handleQuit}
             />
+          ) : questions.length === 0 ? (
+            <div className="text-center p-6 bg-white shadow-md rounded-lg">
+              <h2 className="text-lg font-bold mb-4">No Questions Available</h2>
+              <p className="text-md mb-4">Please try again later.</p>
+              <button
+                onClick={handleQuit}
+                className="px-4 py-2 bg-theme-ERNI text-white font-semibold rounded-lg shadow-md border 
+                hover:bg-transparent hover:text-theme-ERNI hover:border-theme-ERNI"
+              >
+                Quit
+              </button>
+            </div>
           ) : (
             <div className="w-full max-w-md mx-auto">
               {questions.length > 0 && (
