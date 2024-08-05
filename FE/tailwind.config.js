@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     screens: {
+      'xs': '320px',
+      // => @media (min-width: 320px) { ... }
+
       'sm': '640px',
       // => @media (min-width: 640px) { ... }
 
@@ -24,7 +27,7 @@ export default {
     extend: {
       backgroundImage: {
         'custom-image': "url('/src/assets/Quizernia.png')",
-        'wallpaper': "url('/src/assets/BGQUIZ.png')",
+        'wallpaper': "url('/src/assets/BGQUIZ3.png')",
       },
       colors: {
         theme: {

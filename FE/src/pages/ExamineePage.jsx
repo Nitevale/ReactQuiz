@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import NameBox from "../components/NameBox";
 import Lottie from "lottie-react";
@@ -21,6 +21,7 @@ const ExamineePage = () => {
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   const [score, setScore] = useState(0);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,6 +41,7 @@ const ExamineePage = () => {
     setName(enteredName);
     setIsNameBoxVisible(false);
     setIsLoading(true);
+    localStorage.removeItem('quizState');
   };
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const ExamineePage = () => {
 
   useEffect(() => {
     if (questions.length > 0) {
-      const newProgress = ((currentQuestionIndex) / questions.length) * 100;
+      const newProgress = (currentQuestionIndex / questions.length) * 100;
       setProgress(newProgress);
     }
   }, [currentQuestionIndex, questions.length]);
@@ -64,9 +66,7 @@ const ExamineePage = () => {
 
     questions.forEach((question) => {
       const selectedAnswer = selectedAnswers[question.questionID];
-      const correctAnswer = question.choices.find(
-        (choice) => choice.isCorrect
-      );
+      const correctAnswer = question.choices.find((choice) => choice.isCorrect);
 
       if (selectedAnswer?.choiceId === correctAnswer?.choiceId) {
         score += 1;
@@ -77,11 +77,12 @@ const ExamineePage = () => {
   };
 
   const handleFinish = async () => {
+    setIsButtonDisabled(true);
     const finalScore = calculateScore();
     setScore(finalScore);
     const data = {
       examineeName: name,
-      score: finalScore
+      score: finalScore,
     };
 
     console.log("Data being sent to the server:", data);
@@ -92,7 +93,12 @@ const ExamineePage = () => {
       setIsQuizFinished(true);
       setIsLoading(true);
     } catch (error) {
-      console.error("Error submitting score or fetching leaderboard:", error.response?.data.errors);
+      console.error(
+        "Error submitting score or fetching leaderboard:",
+        error.response?.data.errors
+      );
+    } finally {
+      setIsButtonDisabled(false);
     }
   };
 
@@ -105,9 +111,11 @@ const ExamineePage = () => {
     }
 
     setError("");
+    setIsButtonDisabled(true);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setIsButtonDisabled(false);
     } else {
       handleFinish();
     }
@@ -137,10 +145,12 @@ const ExamineePage = () => {
     setScore(0);
     setProgress(0);
     setIsLoading(true);
+    localStorage.removeItem('quizState');
   };
 
   const handleQuit = () => {
     navigate("/");
+    localStorage.removeItem('quizState');
   };
 
   return (
@@ -179,7 +189,10 @@ const ExamineePage = () => {
             <div className="w-full max-w-md mx-auto">
               {questions.length > 0 && (
                 <>
-                  <div className="p-4 bg-white shadow-md rounded-lg">
+                  <div
+                    className="p-4 bg-white shadow-md rounded-lg 
+                  md:mt-20 xs:mt-24"
+                  >
                     <h2 className="text-lg font-bold mb-4">
                       {questions[currentQuestionIndex].questionText}
                     </h2>
@@ -211,12 +224,12 @@ const ExamineePage = () => {
                     <div className="mt-6 text-right">
                       <button
                         className={`px-4 py-2 rounded-lg font-semibold shadow-md transition duration-300 ease-in-out ${
-                          error
+                          error || isButtonDisabled
                             ? "bg-gray-400 cursor-not-allowed"
                             : "bg-theme-ERNI text-white border border-theme-ERNI hover:bg-white hover:text-theme-ERNI"
                         }`}
-                        onClick={handleNext}
-                        disabled={!!error}
+                        onClick={currentQuestionIndex < questions.length - 1 ? handleNext : handleFinish}
+                        disabled={!!error || isButtonDisabled}
                       >
                         {currentQuestionIndex < questions.length - 1
                           ? "Next"

@@ -14,7 +14,7 @@ const LogoHolder = () => {
       <img
         src={erniLogo}
         alt="ERNI LOGO"
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover hover:cursor-pointer"
         onClick={goHome}
       />
     </div>

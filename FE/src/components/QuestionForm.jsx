@@ -56,6 +56,7 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
         <textarea
           type="text"
           required
+          placeholder="What is an example?"
           value={questionText}
           onChange={(e) => setQuestionText(e.target.value)}
           className={`border border-gray-300 w-full min-h-24 max-h-24 mt-2 p-2 rounded-md resize-none ${
@@ -93,6 +94,7 @@ const QuestionForm = ({ onSubmit, initialData = {}, readOnly = false }) => {
             <input
               type="text"
               required
+              placeholder="Example"
               value={choice.choiceText}
               onChange={(e) => handleChoiceChange(index, e.target.value)}
               className={`border ${

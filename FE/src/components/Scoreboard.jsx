@@ -23,7 +23,7 @@ const Scoreboard = ({ score, questions, leaderboard, onTryAgain, onQuit }) => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="p-6 bg-white shadow-md rounded-lg">
+      <div className="p-6 bg-white shadow-md rounded-lg md:mt-20 xs:mt-20">
         <h2 className={`text-lg font-bold mb-4 ${scoreColor}`}>{message}</h2>
         <p className="text-md mb-2">
           Score: <span className={`font-semibold ${scoreColor}`}>{score}</span>

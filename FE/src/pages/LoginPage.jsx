@@ -24,9 +24,9 @@ const LoginPage = () => {
         username: data.username,
         password: data.password,
       });
-  
+
       const { message, user: role } = response.data;
-  
+
       if (message === "Login successful") {
         dispatch(login({ username: data.username, role }));
         console.log("Login successful, navigating to /examiner");
@@ -35,14 +35,18 @@ const LoginPage = () => {
         setErrorMessage("Unexpected response from server");
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        setErrorMessage("Invalid username or password.");
+      if (401) {
+        setErrorMessage("Invalid username or password");
       } else {
         console.error("Error logging in:", error);
         setErrorMessage("An error occurred. Please try again later.");
       }
     }
-  };  
+  };
+
+  const goBack = () => {
+    navigate("/");
+  };
 
   return (
     <div
@@ -57,6 +61,14 @@ const LoginPage = () => {
           )}
           <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
             <div className="mb-4">
+              <div className="">
+                <button
+                  onClick={goBack}
+                  className="mb-2 text-theme-base rounded hover:text-black"
+                >
+                  <i className="fa-solid fa-right-from-bracket rotate-180"></i>
+                </button>
+              </div>
               <label
                 htmlFor="username"
                 className="block text-theme-ERNI font-bold mb-2"

@@ -280,7 +280,7 @@ const ExaminerPage = () => {
                     prepareRow(row);
                     const { key, ...restRowProps } = row.getRowProps();
                     return (
-                      <tr key={key} {...restRowProps}>
+                      <tr className="hover:bg-gray-100" key={key} {...restRowProps}>
                         {row.cells.map((cell) => {
                           const { key, ...restCellProps } = cell.getCellProps();
                           return (
