@@ -9,6 +9,15 @@ import Scoreboard from "../components/Scoreboard";
 const API_URL = "http://localhost:5297/api/Quiz";
 const SCORE_API_URL = "http://localhost:5297/api/Score";
 
+const shuffleArray = (array) => {
+  let shuffledArray = array.slice();
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+};
+
 const ExamineePage = () => {
   const [isNameBoxVisible, setIsNameBoxVisible] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +37,10 @@ const ExamineePage = () => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get(API_URL);
-        setQuestions(response.data);
+        console.log("Questions before shuffling:", response.data);
+        const shuffledQuestions = shuffleArray(response.data);
+        console.log("Questions after shuffling:", shuffledQuestions);
+        setQuestions(shuffledQuestions);
       } catch (error) {
         console.error("Error fetching questions:", error);
       }
